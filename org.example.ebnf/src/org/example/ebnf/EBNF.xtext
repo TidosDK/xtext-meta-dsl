@@ -1,0 +1,45 @@
+grammar org.example.domainmodel.Domainmodel with org.eclipse.xtext.common.Terminals
+
+generate domainmodel "http://www.example.org/domainmodel/Domainmodel"
+
+// Here I define my language with all the rules for it.
+Language:
+    'language' name=ID
+    rules+=Rule*;
+
+Rule:
+    name=ID '::=' body=Expression ';';
+
+// I only use this for clarity. It serves no purpose as it is basically just a pointer.
+Expression:
+    Alternative;
+
+// Handles OR operator (|). It basically just says it is a list of sequences **possibly** seperated by the '|' charachter.
+Alternative:
+    sequences+=Sequence ('|' sequences+=Sequence)*;
+
+// Handles things placed next to each other.
+Sequence:
+    singleItems+=SingleItem (singleItems+=SingleItem)*;
+
+SingleItem:
+    Element;
+
+// The remaining non-terminals are my base elements. The Element object is a parent of them for easier usage.
+Element:
+    Keyword | RuleCall | Group | Repetition | BuiltInTerminals;
+
+Keyword:
+    value=STRING;
+
+RuleCall:
+    ref=[Rule|ID];
+
+Group:
+    '(' expression=Expression ')';
+
+Repetition:
+    '{' expression=Expression '}';
+
+BuiltInTerminals:
+    name=('ID' | 'STRING' | 'INT' | 'WS' | 'ML_COMMENT' | 'SL_COMMENT' | 'ANY_OTHER');

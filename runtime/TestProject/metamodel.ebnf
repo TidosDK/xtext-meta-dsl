@@ -1,0 +1,7 @@
+language Statemachine
+
+Statemachine ::= "name" Name "states" { State } "end" ;
+State        ::= "state" Name "connections" { Connection } "end" ;
+Connection   ::= "connection" Name "state_reference" Targetstate "end" ;
+Targetstate  ::= Name ;
+Name         ::= STRING ;
